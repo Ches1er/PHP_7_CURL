@@ -1,14 +1,14 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: student
- * Date: 18.03.2019
- * Time: 20:27
+ * User: Ivan
+ * Date: 19.03.2019
+ * Time: 9:43
  */
+namespace app\services;
 
-class Users
+class UserService
 {
-
     public function __construct()
     {
     }
@@ -21,15 +21,14 @@ class Users
         $curl = $this->startCurl();
         curl_setopt($curl,CURLOPT_URL,"http://pdfstep.zzz.com.ua?action=user&method=getAll");
         curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-        $responce = curl_exec($curl);
-        var_dump($responce);
+        $responce = json_decode(curl_exec($curl),true);
         curl_close($curl);
-        return $responce;
-
+        return $responce["data"];
     }
     public function addUser(string $name){
         $curl = $this->startCurl();
         curl_setopt($curl,CURLOPT_URL,"http://pdfstep.zzz.com.ua?action=user&method=add");
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
         curl_setopt($curl,CURLOPT_POST,true);
         curl_setopt($curl,CURLOPT_POSTFIELDS,"name=$name");
         curl_exec($curl);
@@ -38,6 +37,7 @@ class Users
     public function delUser(int $id){
         $curl = $this->startCurl();
         curl_setopt($curl,CURLOPT_URL,"http://pdfstep.zzz.com.ua?action=user&method=del");
+        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
         curl_setopt($curl,CURLOPT_POST,true);
         curl_setopt($curl,CURLOPT_POSTFIELDS,"id=$id");
         curl_exec($curl);
