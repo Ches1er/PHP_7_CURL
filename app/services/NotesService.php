@@ -7,47 +7,26 @@
  */
 
 namespace app\services;
+use core\base\Curl;
 
-
-class NotesService
+class NotesService extends Curl
 {
-    public function __construct()
-    {
-    }
-
-    private function startCurl(){
-        return curl_init();
-    }
 
     public function showNotes($id){
         if (is_null($id)) return null;
-        $curl = $this->startCurl();
-        curl_setopt($curl,CURLOPT_URL,"http://pdfstep.zzz.com.ua?action=todo&method=get");
-        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-        curl_setopt($curl,CURLOPT_POST,true);
-        curl_setopt($curl,CURLOPT_POSTFIELDS,"id=$id");
-        $responce = json_decode(curl_exec($curl),true);
-        curl_close($curl);
+        $responce = $this->init()->setUrl("http://pdfstep.zzz.com.ua?action=todo&method=get")->
+            setMethod("POST")->setParams(["id"=>$id])->exec();
+        $responce = json_decode($responce,true);
         return $responce["data"];
     }
     public function addNote(int $user_id,string $note_name,string $desc){
         $data = ["id"=>$user_id,"name"=>$note_name,"desc"=>$desc];
-        $curl = $this->startCurl();
-        curl_setopt($curl,CURLOPT_URL,"http://pdfstep.zzz.com.ua?action=todo&method=add");
-        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-        curl_setopt($curl,CURLOPT_POST,true);
-        curl_setopt($curl,CURLOPT_POSTFIELDS,$data);
-        curl_exec($curl);
-        curl_close($curl);
+        $this->init()->setUrl("http://pdfstep.zzz.com.ua?action=todo&method=add")->
+            setMethod("POST")->setParams($data)->exec();
     }
     public function delNote(int $id){
-        $curl = $this->startCurl();
-        curl_setopt($curl,CURLOPT_URL,"http://pdfstep.zzz.com.ua?action=todo&method=delete");
-        curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
-        curl_setopt($curl,CURLOPT_POST,true);
-        curl_setopt($curl,CURLOPT_POSTFIELDS,"id=$id");
-        curl_exec($curl);
-        curl_close($curl);
+        $this->init()->setUrl("http://pdfstep.zzz.com.ua?action=todo&method=delete")->
+            setMethod("POST")->setParams(["id"=>$id])->exec();
     }
     public function showNote($user_id,$note_id){
         if (is_null($user_id) || is_null($note_id)) return null;
